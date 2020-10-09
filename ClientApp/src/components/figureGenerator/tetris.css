@@ -1,0 +1,7 @@
+﻿.tetris {
+    width: 30px;
+    height: 30px;
+}
+.filled {
+    background: black;
+}

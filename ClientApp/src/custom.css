@@ -1,0 +1,130 @@
+/* Provide sufficient contrast against white background */
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.player {
+    padding: 5px;
+    width: 150px;
+    border: 2px solid #008CBA;
+    border-radius: 12px;
+}
+
+.player0 {
+    float: left;
+}
+
+.player1 {
+    float: right;
+}
+
+.player2 {
+    float: left;
+    margin-top: 300px;
+    margin-left: -150px;
+}
+
+.player3 {
+    float: right;
+    margin-top: 300px;
+    margin-right: -150px;
+}
+
+table {
+    float: left;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+td {
+    border: 1px solid black;
+}
+
+.message {
+    font-size: large;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.player0Cell {
+    background: blue;
+}
+
+.player1Cell {
+    background: darkgreen;
+}
+
+.player2Cell {
+    background: yellow;
+}
+
+.player3Cell {
+    background: violet;
+}
+
+.possibleGoodPosition {
+    background: chartreuse;
+}
+
+.possibleBadPosition {
+    background: crimson;
+}
+
+button.playerTable {
+    width: 95%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+    color: black;
+    border: 2px solid #008CBA;
+    border-radius: 12px;
+    transition-duration: 0.4s;
+    box-shadow: 0 5px #999;
+}
+
+    button.playerTable:disabled {
+        background-color: #999;
+    }
+
+        button.playerTable:disabled:hover {
+            background-color: #999;
+        }
+
+    button.playerTable:focus {
+        outline: none;
+    }
+
+    button.playerTable:hover {
+        background-color: #008CBA;
+    }
+
+    button.playerTable:active {
+        background-color: #008CBA;
+        box-shadow: 0 1px #666;
+        transform: translateY(4px);
+    }
+
+button.gameParameters {
+    width: 20%;
+    background-color: white;
+    color: black;
+    margin: 10px;
+    border: 2px solid #008CBA;
+    border-radius: 12px;
+    transition-duration: 0.4s;
+}
+
+    button.gameParameters:focus {
+        outline: none;
+    }
+
+    button.gameParameters:hover {
+        background-color: #008CBA;
+    }
+
+    button.gameParameters.selected {
+        background: #008CBA;
+    }
