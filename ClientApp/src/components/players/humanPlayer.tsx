@@ -45,26 +45,26 @@ export default class HumanPlayer extends Player<State> {
     private getFirstTurnMessage = () => {
         switch (this.props.playerNumber) {
             case 0:
-                return `${this.getPlayerName} first turn. Place a figure at left upper corner.`;
+                return `${this.getPlayerName()} first turn. Place a figure at left upper corner.`;
             case 1:
-                return `${this.getPlayerName} first turn. Place a figure at right lower corner.`;
+                return `${this.getPlayerName()} first turn. Place a figure at right lower corner.`;
             case 2:
-                return `${this.getPlayerName} first turn. Place a figure at left lower corner.`;
+                return `${this.getPlayerName()} first turn. Place a figure at left lower corner.`;
             default:
-                return `${this.getPlayerName} first turn. Place a figure at right upper corner.`;
+                return `${this.getPlayerName()} first turn. Place a figure at right upper corner.`;
         }
     }
 
     private getNextTurnMessage = () => {
         switch (this.props.playerNumber) {
             case 0:
-                return `${this.getPlayerName} turn. Place a figure close to blue squares.`;
+                return `${this.getPlayerName()} turn. Place a figure close to blue squares.`;
             case 1:
-                return `${this.getPlayerName} turn. Place a figure close to green squares.`;
+                return `${this.getPlayerName()} turn. Place a figure close to green squares.`;
             case 2:
-                return `${this.getPlayerName} turn. Place a figure close to yellow squares.`;
+                return `${this.getPlayerName()} turn. Place a figure close to yellow squares.`;
             default:
-                return `${this.getPlayerName} turn. Place a figure close to violet squares.`;
+                return `${this.getPlayerName()} turn. Place a figure close to violet squares.`;
         }
     }
 

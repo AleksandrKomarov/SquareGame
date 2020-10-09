@@ -23,7 +23,7 @@ export default class GameParametersComponent extends React.Component<Props, Game
                 {this.renderOpponentTypeSelector()}
                 {this.renderPlayersCountSelector()}
                 {this.renderGameTypeSelector()}
-                <button onClick={() => this.props.onCreateNewGame(this.state)}>Create new game</button>
+                <button className="startGame" onClick={() => this.props.onCreateNewGame(this.state)}>Start</button>
             </div>);
     }
 
