@@ -41,9 +41,6 @@ export default class ComputerPlayer extends Player<State> {
     }
 
     render(): JSX.Element {
-        const computerName = this.props.playersCells.length === 2
-            ? "Computer"
-            : `Computer ${this.props.playerNumber}`;
         return (
             <ComputerTable
                 playerNumber={this.props.playerNumber}

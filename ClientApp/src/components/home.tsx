@@ -3,6 +3,7 @@ import { Container } from 'reactstrap';
 import NavMenu from './navMenu';
 import GameParametersComponent from './gameParametersComponent';
 import Field from './field';
+import Welcome from './welcome';
 import { OpponentType, GameType, FigureType, GameParameters } from './gameParameters';
 
 interface Props {
@@ -32,7 +33,7 @@ export default class Home extends React.Component<Props, State> {
     render() {
         let content: JSX.Element | null = null;
         if (this.state.view === "start")
-            content = null;
+            content = <Welcome />;
         if (this.state.view === "create")
             content = <GameParametersComponent previousParameters={this.state.gameParameters} onCreateNewGame={this.onCreateNewGame} />;
         if (this.state.view === "game")

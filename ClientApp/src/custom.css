@@ -128,3 +128,8 @@ button.gameParameters {
     button.gameParameters.selected {
         background: #008CBA;
     }
+
+img {
+    float: left;
+    margin-right: 50px;
+}

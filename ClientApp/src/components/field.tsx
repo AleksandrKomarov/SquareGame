@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getPlayersTables, getPlayers } from './players/playersFactory';
 import { IPlayer } from "./players/player";
-import { GameType, GameParameters } from "./gameParameters";
+import { GameParameters } from "./gameParameters";
 import { PlayerProps } from './players/player';
 import { Coordinates } from './coordinates';
 import createFigureGenerator from './figureGenerator/figureGeneratorFactory';
