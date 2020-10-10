@@ -26,7 +26,7 @@ export default class ComputerPlayer extends Player<State> {
             this.setState({
                 ...this.state,
                 message: "Rolling..."
-            }, () => this.rollDice());
+            }, () => setTimeout(() => this.rollDice(), 300));
         }
     }
 
@@ -37,7 +37,7 @@ export default class ComputerPlayer extends Player<State> {
     }
 
     getTurnMessage(): string {
-        return "Computer is thinking...";
+        return `${this.getPlayerName()} turn`;
     }
 
     render(): JSX.Element {
@@ -68,7 +68,7 @@ export default class ComputerPlayer extends Player<State> {
             ...this.state,
             figure: this.props.figureGenerator.generate(),
             message: "Thinking..."
-        }, () => this.tryPlaceFigure());
+        }, () => setTimeout(() => this.tryPlaceFigure(), 700));
     }
 
     private tryPlaceFigure = () => {
