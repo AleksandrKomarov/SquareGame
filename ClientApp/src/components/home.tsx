@@ -22,11 +22,11 @@ export default class Home extends React.Component<Props, State> {
             view: "start",
             gameParameters: {
                 fieldSize: 15,
-                opponentType: OpponentType.Human,
+                opponentType: OpponentType.Computer,
                 playersCount: 2,
                 gameType: GameType.Pvp,
                 figureType: FigureType.Dice
-    }
+            }
         };
     }
 
@@ -41,7 +41,7 @@ export default class Home extends React.Component<Props, State> {
 
         return (
             <React.Fragment>
-                <NavMenu links={["Create new game", "Home"]} onLinkClick={this.onLinkClick}/>
+                <NavMenu links={["Start new game", "Home"]} onLinkClick={this.onLinkClick}/>
                 <Container id="container">
                     {content}
                 </Container>
@@ -49,7 +49,7 @@ export default class Home extends React.Component<Props, State> {
     }
 
     private onLinkClick = (link: string) => {
-        if (link === "Create new game") {
+        if (link === "Start new game") {
             this.setState({
                 ...this.state,
                 view: "create"

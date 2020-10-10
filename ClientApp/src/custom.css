@@ -117,6 +117,14 @@ button.gameParameters {
     transition-duration: 0.4s;
 }
 
+    button.gameParameters:disabled {
+        background-color: #999;
+    }
+
+        button.gameParameters:disabled:hover {
+            background-color: #999;
+        }
+
     button.gameParameters:focus {
         outline: none;
     }
