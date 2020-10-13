@@ -5,12 +5,13 @@ import GameParametersComponent from './gameParametersComponent';
 import Field from './field';
 import Welcome from './welcome';
 import { OpponentType, GameType, FigureType, GameParameters } from './gameParameters';
+import { Pages } from './pages';
 
 interface Props {
 }
 
 interface State {
-    view: string;
+    page: Pages;
     gameParameters: GameParameters;
 }
 
@@ -19,7 +20,7 @@ export default class Home extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            view: "start",
+            page: Pages.Welcome,
             gameParameters: {
                 fieldSize: 15,
                 opponentType: OpponentType.Computer,
@@ -31,43 +32,45 @@ export default class Home extends React.Component<Props, State> {
     }
 
     render() {
-        let content: JSX.Element | null = null;
-        if (this.state.view === "start")
-            content = <Welcome />;
-        if (this.state.view === "create")
-            content = <GameParametersComponent previousParameters={this.state.gameParameters} onCreateNewGame={this.onCreateNewGame} />;
-        if (this.state.view === "game")
-            content = <Field gameParameters={this.state.gameParameters} />;
+        let content: JSX.Element;
+        switch (this.state.page) {
+            case Pages.Welcome:
+                content = <Welcome />;
+                break;
+            case Pages.Create:
+                content = <GameParametersComponent previousParameters={this.state.gameParameters} onCreateNewGame={this.onCreateNewGame} />;
+                break;
+            case Pages.Game:
+                content = <Field gameParameters={this.state.gameParameters} />;
+                break;
+            default:
+                throw new Error("Not implemented");
+        }
+
+        const links: [Pages, string][] = [
+            [Pages.Welcome, "Home"],
+            [Pages.Create, "Start new game"]];
 
         return (
             <React.Fragment>
-                <NavMenu links={["Start new game", "Home"]} onLinkClick={this.onLinkClick}/>
+                <NavMenu links={links} onLinkClick={this.onLinkClick}/>
                 <Container id="container">
                     {content}
                 </Container>
             </React.Fragment>);
     }
 
-    private onLinkClick = (link: string) => {
-        if (link === "Start new game") {
-            this.setState({
-                ...this.state,
-                view: "create"
-            });
-        }
-
-        if (link === "Home") {
-            this.setState({
-                ...this.state,
-                view: "start"
-            });
-        }
+    private onLinkClick = (page: Pages) => {
+        this.setState({
+            ...this.state,
+            page: page
+        });
     }
 
     private onCreateNewGame = (gameParameters: GameParameters) => {
         this.setState({
             ...this.state,
-            view: "game",
+            page: Pages.Game,
             gameParameters: {
                 ...gameParameters
             }

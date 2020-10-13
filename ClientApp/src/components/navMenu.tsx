@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './navMenu.css';
+import { Pages } from './pages';
 
 interface Props {
-    links: string[];
-    onLinkClick: (link: string) => void;
+    links: [Pages, string][];
+    onLinkClick: (page: Pages) => void;
 }
 
 interface State {
@@ -22,7 +23,7 @@ export default class NavMenu extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const links = this.props.links.map(link => <NavLink key={link} tag={Link} className="text-dark" onClick={() => this.props.onLinkClick(link)} to="/">{link}</NavLink>);
+        const links = this.props.links.map(link => <NavLink key={link[0]} tag={Link} className="text-dark" onClick={() => this.props.onLinkClick(link[0])} to="/">{link[1]}</NavLink>);
 
         return (
             <header>
