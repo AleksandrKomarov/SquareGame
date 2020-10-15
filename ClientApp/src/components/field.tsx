@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getPlayersTables, getPlayers } from './players/playersFactory';
 import { IPlayer } from "./players/player";
-import { GameParameters } from "./gameParameters";
+import { GameParameters } from "./gameParameters/gameParameters";
 import { PlayerProps } from './players/player';
 import { Coordinates } from './coordinates';
 import createFigureGenerator from './figureGenerator/figureGeneratorFactory';
@@ -34,8 +34,9 @@ export default class Field extends React.Component<Props, State> {
             playerNumber: 0,
             isActive: false,
             updateField: () => this.forceUpdate(),
-            onPlaceFigure: this.placeFigure,
-            onSkip: this.onSkip
+            onPlaceFigure: this.placeFigure.bind(this),
+            onSkip: this.onSkip.bind(this),
+            onGameEnd: this.onGameEnd.bind(this)
         };
 
         this.gameTypeProvider = createGameTypeProvider(props.gameParameters);
@@ -181,5 +182,15 @@ export default class Field extends React.Component<Props, State> {
             skippedCount: skippedCount,
             gameEnd: skippedCount === this.props.gameParameters.playersCount
         });
+    }
+
+    private onGameEnd = (message: string) => {
+        if (this.state.gameEnd)
+            return;
+
+        this.setState({
+            ...this.state,
+            gameEnd: true
+        }, () => alert(message));
     }
 }

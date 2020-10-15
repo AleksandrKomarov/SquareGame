@@ -1,6 +1,6 @@
 import { IPlayer } from './players/player';
 import { Coordinates } from './coordinates';
-import { GameType, GameParameters } from './gameParameters';
+import { GameType, GameParameters } from './gameParameters/gameParameters';
 
 export interface IGameTypeProvider {
     getGameEndMessage(players: IPlayer[], playersCells: Coordinates[][]): string;

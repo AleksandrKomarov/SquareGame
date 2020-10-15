@@ -10,7 +10,7 @@ interface State {
     dig: string;
 }
 
-export default class ComputerPlayer extends Player<State> {
+export default class ComputerPlayer extends Player<PlayerProps, State> {
     constructor(props: PlayerProps) {
         super(props);
 

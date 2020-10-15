@@ -7,6 +7,7 @@ import Tetris from './tetris';
 export default class TetrisGenerator implements IFigureGenerator {
     getDefault(): Figure {
         return {
+            key: 0,
             canBeRotated: false,
             presenter: <Tetris figure={[]} />,
             coordinates: [],
@@ -17,34 +18,39 @@ export default class TetrisGenerator implements IFigureGenerator {
     generate(): Figure {
         const value = Math.floor(Math.random() * Math.floor(7));
 
+        return this.restoreRemote(value);
+    }
+
+    restoreRemote(key: number): Figure {
         let figure: Coordinates[];
         let canBeRotated = true;
-        switch (value) {
-            case 0:
-                figure = this.getSquare();
-                canBeRotated = false;
-                break;
-            case 1:
-                figure = this.getLine();
-                break;
-            case 2:
-                figure = this.getT();
-                break;
-            case 3:
-                figure = this.getG();
-                break;
-            case 4:
-                figure = this.getBackG();
-                break;
-            case 5:
-                figure = this.getZ();
-                break;
-            default:
-                figure = this.getBackZ();
-                break;
+        switch (key) {
+        case 0:
+            figure = this.getSquare();
+            canBeRotated = false;
+            break;
+        case 1:
+            figure = this.getLine();
+            break;
+        case 2:
+            figure = this.getT();
+            break;
+        case 3:
+            figure = this.getG();
+            break;
+        case 4:
+            figure = this.getBackG();
+            break;
+        case 5:
+            figure = this.getZ();
+            break;
+        default:
+            figure = this.getBackZ();
+            break;
         }
 
         return {
+            key: key,
             canBeRotated: canBeRotated,
             presenter: <Tetris figure={figure} />,
             coordinates: figure,

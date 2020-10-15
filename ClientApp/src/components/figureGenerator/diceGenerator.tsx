@@ -7,6 +7,7 @@ import Dice from './dice';
 export default class DiceGenerator implements IFigureGenerator {
     getDefault(): Figure {
         return {
+            key: 0,
             canBeRotated: false,
             presenter: this.renderDice(1, 1),
             coordinates: [],
@@ -18,7 +19,15 @@ export default class DiceGenerator implements IFigureGenerator {
         const firstDice = 1 + Math.floor(Math.random() * Math.floor(6));
         const secondDice = 1 + Math.floor(Math.random() * Math.floor(6));
 
+        return this.restoreRemote(firstDice * 100 + secondDice);
+    }
+
+    restoreRemote(key: number): Figure {
+        const firstDice = Math.floor(key / 100);
+        const secondDice = key % 100;
+
         return {
+            key: key,
             canBeRotated: firstDice !== secondDice,
             presenter: this.renderDice(firstDice, secondDice),
             coordinates: this.getCoordinates(firstDice, secondDice),

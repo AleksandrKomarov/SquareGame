@@ -11,7 +11,7 @@ interface State {
     isPossibleMousePosition: boolean;
 }
 
-export default class HumanPlayer extends Player<State> {
+export default class HumanPlayer extends Player<PlayerProps, State> {
     constructor(props: PlayerProps) {
         super(props);
 

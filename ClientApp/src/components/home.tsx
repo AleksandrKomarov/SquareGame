@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Container } from 'reactstrap';
 import NavMenu from './navMenu';
-import GameParametersComponent from './gameParametersComponent';
+import GameParametersComponent from './gameParameters/gameParametersComponent';
 import Field from './field';
 import Welcome from './welcome';
-import { OpponentType, GameType, FigureType, GameParameters } from './gameParameters';
+import { ServerType, OpponentType, GameType, FigureType, GameParameters } from './gameParameters/gameParameters';
 import { Pages } from './pages';
 
 interface Props {
@@ -22,6 +22,8 @@ export default class Home extends React.Component<Props, State> {
         this.state = {
             page: Pages.Welcome,
             gameParameters: {
+                serverType: ServerType.Local,
+                remoteGame: null,
                 fieldSize: 15,
                 opponentType: OpponentType.Computer,
                 playersCount: 2,
@@ -38,7 +40,7 @@ export default class Home extends React.Component<Props, State> {
                 content = <Welcome />;
                 break;
             case Pages.Create:
-                content = <GameParametersComponent previousParameters={this.state.gameParameters} onCreateNewGame={this.onCreateNewGame} />;
+                content = <GameParametersComponent previousGameParameters={this.state.gameParameters} onCreateNewGame={this.onCreateNewGame} />;
                 break;
             case Pages.Game:
                 content = <Field gameParameters={this.state.gameParameters} />;

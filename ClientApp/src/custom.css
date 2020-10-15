@@ -73,6 +73,10 @@ td {
     background: crimson;
 }
 
+.possibleRemotePosition {
+    background: darkgrey;
+}
+
 button.playerTable {
     width: 95%;
     margin-top: 10px;
@@ -148,6 +152,14 @@ button.startGame {
     transition-duration: 0.4s;
 }
 
+    button.startGame:disabled {
+        background-color: #999;
+    }
+
+        button.startGame:disabled:hover {
+            background-color: #999;
+        }
+
     button.startGame:focus {
         outline: none;
     }
@@ -159,4 +171,9 @@ button.startGame {
 img {
     float: left;
     margin-right: 50px;
+}
+
+span.error-message {
+    color: red;
+    font-style: italic;
 }

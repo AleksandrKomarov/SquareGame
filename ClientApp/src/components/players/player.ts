@@ -20,9 +20,10 @@ export interface PlayerProps {
     updateField: () => void;
     onPlaceFigure: (coordinates: Coordinates[]) => void;
     onSkip: () => void;
+    onGameEnd: (message: string) => void;
 }
 
-export abstract class Player<TState> extends React.Component<PlayerProps, TState> implements IPlayer {
+export abstract class Player<TProps extends PlayerProps, TState>  extends React.Component<TProps, TState> implements IPlayer  {
     abstract getPlayerName(): string;
 
     abstract getTurnMessage(): string;

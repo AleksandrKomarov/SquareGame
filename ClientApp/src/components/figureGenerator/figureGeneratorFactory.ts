@@ -1,4 +1,4 @@
-import { FigureType } from '../gameParameters';
+import { FigureType } from '../gameParameters/gameParameters';
 import { IFigureGenerator } from './figureGenerator';
 import DiceGenerator from './diceGenerator';
 import TetrisGenerator from './tetrisGenerator';

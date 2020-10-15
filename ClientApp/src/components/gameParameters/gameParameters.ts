@@ -1,3 +1,11 @@
+import { RemoteGame } from '../remoteGame';
+
+export enum ServerType {
+    Local,
+    Host,
+    Remote
+}
+
 export enum OpponentType {
     Human,
     Computer
@@ -14,6 +22,8 @@ export enum FigureType {
 }
 
 export interface GameParameters {
+    serverType: ServerType;
+    remoteGame: RemoteGame | null;
     fieldSize: number;
     opponentType: OpponentType;
     playersCount: number;
