@@ -4,6 +4,7 @@ import NavMenu from './navMenu';
 import GameParametersComponent from './gameParameters/gameParametersComponent';
 import Field from './field';
 import Welcome from './welcome';
+import Settings from './settings';
 import { ServerType, OpponentType, GameType, FigureType, GameParameters } from './gameParameters/gameParameters';
 import { Pages } from './pages';
 
@@ -45,13 +46,17 @@ export default class Home extends React.Component<Props, State> {
             case Pages.Game:
                 content = <Field gameParameters={this.state.gameParameters} />;
                 break;
+            case Pages.Settings:
+                content = <Settings/>;
+                break;
             default:
                 throw new Error("Not implemented");
         }
 
         const links: [Pages, string][] = [
             [Pages.Welcome, "Home"],
-            [Pages.Create, "Start new game"]];
+            [Pages.Create, "Start new game"],
+            [Pages.Settings, "Settings"]];
 
         return (
             <React.Fragment>

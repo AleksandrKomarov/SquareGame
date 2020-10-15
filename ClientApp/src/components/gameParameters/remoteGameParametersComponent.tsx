@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { GameParametersProps } from './gameParametersProps';
 import { ServerType, GameParameters } from './gameParameters';
-import { IRemoteGameListener, RemoteGameStatus, RemoteGame, Message, MessageType} from '../remoteGame';
+import { IRemoteGameListener, RemoteGameStatus, RemoteGame, Message, MessageType } from '../remoteGame';
+import Cookies from 'universal-cookie';
 
 interface State {
     remoteGame: RemoteGame | null;
@@ -79,6 +80,14 @@ export default class RemoteGameParametersComponent extends React.Component<GameP
                 }
 
                 remoteGame.removeListener(this);
+
+                const cookies = new Cookies();
+                if (cookies.get("agreeToStoreNickname") === "true") {
+                    const nickname = cookies.get("nickname");
+                    if (nickname !== null && nickname !== "") {
+                        remoteGame.sendNickname(nickname);
+                    }
+                }
 
                 const gameParameters: GameParameters = message.data;
 

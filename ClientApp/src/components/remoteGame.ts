@@ -18,6 +18,7 @@ export enum MessageType {
     PlayerNumber = 0,
     PlayersChanged = 1,
     GameStarted = 2,
+    PlayerNickname = 3,
     Roll = 10,
     Rotate = 11,
     Skip = 12,
@@ -25,9 +26,15 @@ export enum MessageType {
     MouseMove = 14
 }
 
+interface PlayerNickname {
+    playerNumber: number;
+    nickname: string;
+}
+
 export class RemoteGame {
     private readonly gameGuid: string;
     private readonly webSocket: WebSocket;
+    private readonly playerNicknames: PlayerNickname[] = [];
 
     private gameStarted: boolean = false;
     private playerNumber: number = 0;
@@ -74,6 +81,9 @@ export class RemoteGame {
                 this.gameStarted = true;
                 this.listeners.forEach(l => l.onMessage(message));
                 break;
+            case MessageType.PlayerNickname:
+                this.playerNicknames.push(message.data);
+                break;
             default:
                 this.listeners.forEach(l => l.onMessage(message));
         }
@@ -95,12 +105,34 @@ export class RemoteGame {
         return this.playerNumber;
     }
 
+    tryGetPlayerNickname = (playerNumber: number): string | null => {
+        const playerNickname = this.playerNicknames.find(pn => pn.playerNumber === playerNumber);
+        if (playerNickname !== undefined && playerNickname !== null) {
+            return playerNickname.nickname;
+        }
+
+        return null;
+    }
+
     addListener = (listener: IRemoteGameListener) => {
         this.listeners.push(listener);
     }
 
     removeListener = (listener: IRemoteGameListener) => {
         this.listeners = this.listeners.filter(l => l !== listener);
+    }
+
+    sendNickname = (nickname: string) => {
+        const playerNickname: PlayerNickname = {
+            playerNumber: this.playerNumber,
+            nickname: nickname
+        };
+
+        this.playerNicknames.push(playerNickname);
+        this.send({
+            type: MessageType.PlayerNickname,
+            data: playerNickname
+        });
     }
 
     send = (message: Message) => {

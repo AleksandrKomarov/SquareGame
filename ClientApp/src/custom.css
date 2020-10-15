@@ -177,3 +177,7 @@ span.error-message {
     color: red;
     font-style: italic;
 }
+
+input[type='checkbox'] {
+    margin-right: 10px;
+}

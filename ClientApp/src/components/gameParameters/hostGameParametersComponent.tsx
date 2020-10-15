@@ -3,6 +3,7 @@ import { GameParametersProps } from './gameParametersProps';
 import { ServerType, GameType, FigureType, GameParameters } from './gameParameters';
 import { IRemoteGameListener, RemoteGameStatus, RemoteGame, Message, MessageType } from '../remoteGame';
 import BasicGameParametersComponent from './basicGameParametersComponent';
+import Cookies from 'universal-cookie';
 
 interface State {
     gameParameters: GameParameters;
@@ -26,20 +27,20 @@ export default class HostGameParametersComponent extends React.Component<GamePar
 
     onStatusChange = (status: RemoteGameStatus): void => {
         switch (status) {
-        case RemoteGameStatus.Ready:
-            this.forceUpdate();
-            break;
-        case RemoteGameStatus.Ended:
-            const remoteGame = this.state.remoteGame;
-            if (remoteGame !== null) {
-                remoteGame.removeListener(this);
-                this.setState({
-                    ...this.state,
-                    remoteGame: null,
-                    errorMessage: "Could not create a remote game, try again later"
-                });
-            }
-            break;
+            case RemoteGameStatus.Ready:
+                this.forceUpdate();
+                break;
+            case RemoteGameStatus.Ended:
+                const remoteGame = this.state.remoteGame;
+                if (remoteGame !== null) {
+                    remoteGame.removeListener(this);
+                    this.setState({
+                        ...this.state,
+                        remoteGame: null,
+                        errorMessage: "Could not create a remote game, try again later"
+                    });
+                }
+                break;
         }
     }
 
@@ -162,6 +163,14 @@ export default class HostGameParametersComponent extends React.Component<GamePar
             return;
 
         remoteGame.removeListener(this);
+
+        const cookies = new Cookies();
+        if (cookies.get("agreeToStoreNickname") === "true") {
+            const nickname = cookies.get("nickname");
+            if (nickname !== null && nickname !== "") {
+                remoteGame.sendNickname(nickname);
+            }
+        }
 
         const gameParameters: GameParameters = {
             ...this.state.gameParameters,

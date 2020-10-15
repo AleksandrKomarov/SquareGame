@@ -121,6 +121,11 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
     }
 
     getPlayerName() {
+        const nickname = this.props.remoteGame.tryGetPlayerNickname(this.props.playerNumber);
+        if (nickname !== null)
+            return nickname;
+
+
         switch (this.props.playerNumber) {
             case 0:
                 return "Player A";

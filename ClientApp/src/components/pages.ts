@@ -1,5 +1,6 @@
 export enum Pages {
     Welcome,
     Create,
-    Game
+    Game,
+    Settings
 }
