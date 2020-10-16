@@ -4,7 +4,13 @@ import { ServerType, GameParameters } from './gameParameters';
 import { IRemoteGameListener, RemoteGameStatus, RemoteGame, Message, MessageType } from '../remoteGame';
 import CookieManager from '../cookieManager';
 
+interface PublicGame {
+    gameGuid: string;
+    name: string;
+}
+
 interface State {
+    publicGames: PublicGame[];
     remoteGame: RemoteGame | null;
     gameGuid: string;
     errorMessage: string | null;
@@ -15,10 +21,15 @@ export default class RemoteGameParametersComponent extends React.Component<GameP
         super(props);
 
         this.state = {
+            publicGames: [],
             remoteGame: null,
             gameGuid: "",
             errorMessage: null
         };
+    }
+
+    componentDidMount() {
+        this.getPublicGames();
     }
 
     componentWillUnmount() {
@@ -29,14 +40,24 @@ export default class RemoteGameParametersComponent extends React.Component<GameP
         }
     }
 
+    private getPublicGames = async () => {
+        const response = await fetch("/api/game/GetPublicGames", { method: "GET" });
+        const publicGames = await response.json() as PublicGame[];
+        this.setState({
+            ...this.state,
+            publicGames: publicGames
+        });
+    }
+
     render() {
         const remoteGame = this.state.remoteGame;
         if (remoteGame === null) {
             return (
                 <div>
-                    <input style={{"width": "310px"}} placeholder="Enter game guid" value={this.state.gameGuid} onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onGameGuidChange(event.target.value)} />
-                    <button className="gameParameters" onClick={this.onConnectClick}>Connect</button>
-                    <span className="error-message">{this.state.errorMessage}</span>
+                    <div>Select public game:</div>
+                    {this.renderPublicGameSelector()}
+                    <div>Or enter private game guid:</div>
+                    {this.renderPrivateGameConnector()}
                 </div>);
         }
 
@@ -46,6 +67,36 @@ export default class RemoteGameParametersComponent extends React.Component<GameP
                 <div><strong>{remoteGame.getGameGuid()}</strong></div>
                 <p>Connected players: {remoteGame.getPlayersCount()}</p>
                 <button disabled={true} className="startGame">Waiting for host to start</button>
+            </div>);
+    }
+
+    private renderPublicGameSelector = () => {
+        let content: JSX.Element;
+
+        if (this.state.publicGames.length === 0) {
+            content = <div>No public games :(</div>;
+        } else {
+            const games = this.state.publicGames
+                .map(pg => <li key={pg.gameGuid} onClick={() => this.connect(pg.gameGuid)}><span>{pg.name} ({pg.gameGuid})</span></li>);
+            content = (
+                <ul id="publicGames">
+                    {games}
+                </ul>);
+        }
+
+        return (
+            <div>
+                {content}
+                <button className="gameParameters" onClick={this.getPublicGames}>Refresh</button>
+            </div>);
+    }
+
+    private renderPrivateGameConnector = () => {
+        return (
+            <div>
+                <input style={{ "width": "310px" }} placeholder="Enter game guid" value={this.state.gameGuid} onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onGameGuidChange(event.target.value)} />
+                <button className="gameParameters" onClick={this.onConnectClick}>Connect</button>
+                <span className="error-message">{this.state.errorMessage}</span>
             </div>);
     }
 
@@ -113,9 +164,13 @@ export default class RemoteGameParametersComponent extends React.Component<GameP
 
     private onConnectClick = () => {
         const gameGuid = this.state.gameGuid;
-        if (gameGuid === null)
+        if (gameGuid === "")
             return;
 
+        this.connect(gameGuid);
+    }
+
+    private connect = (gameGuid: string) => {
         const remoteGame = new RemoteGame(gameGuid);
         remoteGame.addListener(this);
 

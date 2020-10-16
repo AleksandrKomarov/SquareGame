@@ -14,9 +14,11 @@ namespace SquareGame.Controllers
         }
 
         [HttpPost("[action]")]
-        public JsonResult StartNew()
+        public JsonResult StartNew(string gameName)
         {
-            var gameGuid = _gameStorage.StartGame();
+            var gameGuid = string.IsNullOrWhiteSpace(gameName)
+                ? _gameStorage.StartPrivateGame()
+                : _gameStorage.StartPublicGame(gameName);
             return Json(gameGuid);
         }
 
@@ -25,6 +27,12 @@ namespace SquareGame.Controllers
         {
             _gameStorage.EndGame(gameGuid);
             return Json(null);
+        }
+
+        [HttpGet("[action]")]
+        public JsonResult GetPublicGames()
+        {
+            return Json(_gameStorage.GetPublicGames());
         }
     }
 }

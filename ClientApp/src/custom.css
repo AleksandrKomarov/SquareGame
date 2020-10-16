@@ -1,9 +1,9 @@
 /* Provide sufficient contrast against white background */
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .player {
@@ -181,3 +181,16 @@ span.error-message {
 input[type='checkbox'] {
     margin-right: 10px;
 }
+
+ul#publicGames {
+    list-style-type: none;
+}
+
+    ul#publicGames span {
+        border-bottom: 2px solid #008CBA;
+    }
+
+        ul#publicGames span:hover {
+            background: aliceblue;
+            border-bottom: 1px solid #999;
+        }

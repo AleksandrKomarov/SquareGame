@@ -13,8 +13,20 @@ namespace SquareGame
         private readonly object _lockObject = new object();
         private readonly Dictionary<Guid, List<WebSocket>> _games = new Dictionary<Guid, List<WebSocket>>();
         private readonly HashSet<Guid> _startedGames = new HashSet<Guid>();
+        private readonly Dictionary<Guid, string> _publicGames = new Dictionary<Guid, string>();
 
-        public Guid StartGame()
+        public Guid StartPublicGame(string gameName)
+        {
+            var gameGuid = Guid.NewGuid();
+            lock (_lockObject)
+            {
+                _games.Add(gameGuid, new List<WebSocket>(4));
+                _publicGames.Add(gameGuid, gameName);
+            }
+            return gameGuid;
+        }
+
+        public Guid StartPrivateGame()
         {
             var gameGuid = Guid.NewGuid();
             lock (_lockObject)
@@ -31,6 +43,8 @@ namespace SquareGame
             {
                 if (!_games.Remove(gameGuid, out var webSockets))
                     return;
+
+                _publicGames.Remove(gameGuid);
 
                 webSocketsToClose = webSockets.ToList();
             }
@@ -64,18 +78,20 @@ namespace SquareGame
 
         public void TryRemovePlayer(Guid gameGuid, WebSocket webSocket)
         {
-            bool shouldEndGame = false;
+            var shouldEndGame = false;
 
             lock (_lockObject)
             {
                 if (!_games.ContainsKey(gameGuid))
                     return;
 
+                var playerIndex = _games[gameGuid].IndexOf(webSocket);
+
                 _games[gameGuid].Remove(webSocket);
 
                 SendPlayersCount(gameGuid);
 
-                shouldEndGame = _startedGames.Contains(gameGuid);
+                shouldEndGame = playerIndex == 0 || _startedGames.Contains(gameGuid);
             }
 
             if (shouldEndGame)
@@ -87,7 +103,19 @@ namespace SquareGame
             lock (_lockObject)
             {
                 _startedGames.Add(gameGuid);
+                _publicGames.Remove(gameGuid);
             }
+        }
+
+        public PublicGameDto[] GetPublicGames()
+        {
+            return _publicGames
+                .Select(kvp => new PublicGameDto
+                {
+                    GameGuid = kvp.Key,
+                    Name = kvp.Value
+                })
+                .ToArray();
         }
 
         public async void NotifyOthers(Guid gameGuid, WebSocket sender, ArraySegment<byte> message)

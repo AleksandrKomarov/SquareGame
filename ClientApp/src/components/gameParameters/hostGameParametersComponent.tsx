@@ -9,6 +9,8 @@ interface State {
     gameParameters: GameParameters;
     remoteGame: RemoteGame | null;
     errorMessage: string | null;
+    publicGame: boolean;
+    publicGameName: string;
 }
 
 export default class HostGameParametersComponent extends React.Component<GameParametersProps, State> implements IRemoteGameListener {
@@ -21,7 +23,9 @@ export default class HostGameParametersComponent extends React.Component<GamePar
                 serverType: ServerType.Host
             },
             remoteGame: null,
-            errorMessage: null
+            errorMessage: null,
+            publicGame: false,
+            publicGameName: ""
         };
     }
 
@@ -82,8 +86,9 @@ export default class HostGameParametersComponent extends React.Component<GamePar
         if (remoteGame === null) {
             return (
                 <div>
-                    <button className="gameParameters" onClick={this.onStartNewGameClick}>Start new game</button>
-                    <span className="error-message">{this.state.errorMessage}</span>
+                    {this.renderPublicGameCheckbox()}
+                    {this.renderPublicGameNameField()}
+                    {this.renderStartButton()}
                 </div>);
         }
 
@@ -103,8 +108,70 @@ export default class HostGameParametersComponent extends React.Component<GamePar
         }
     }
 
+    private renderPublicGameCheckbox = () => {
+        return (
+            <div>
+                <input
+                    type="checkbox"
+                    checked={this.state.publicGame}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onPublicGameChange(event.target.checked)} />
+                <span>Public game: visible for everyone</span>
+            </div>);
+    }
+
+    private onPublicGameChange = (publicGame: boolean) => {
+        this.setState({
+            ...this.state,
+            publicGame: publicGame,
+            publicGameName: ""
+        });
+    }
+
+    private renderPublicGameNameField = () => {
+        if (!this.state.publicGame)
+            return null;
+
+        return (
+            <div>
+                <input
+                    style={{ "width": "300px" }}
+                    placeholder="Enter game name"
+                    value={this.state.publicGameName}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onPublicGameNameChange(event.target.value)} />
+            </div>);
+    }
+
+    private onPublicGameNameChange = (publicGameName: string) => {
+        if (publicGameName.length > 20) {
+            return;
+        }
+
+        this.setState({
+            ...this.state,
+            publicGameName: publicGameName
+        });
+    }
+
+    private renderStartButton = () => {
+        const isDisabled = this.state.publicGame && this.state.publicGameName === "";
+
+        return (
+            <div>
+                <button
+                    disabled={isDisabled}
+                    className="gameParameters"
+                    onClick={() => {
+                        if (!isDisabled)
+                            this.onStartNewGameClick();
+                    }}>
+                    Start new game
+                </button>
+                <span className="error-message">{this.state.errorMessage}</span>
+            </div>);
+    }
+
     private onStartNewGameClick = async () => {
-        const response = await fetch("/api/game/StartNew", { method: "POST" });
+        const response = await fetch(`/api/game/StartNew?gameName=${this.state.publicGameName}`, { method: "POST" });
         const gameGuid = await response.json() as string;
 
         const remoteGame = new RemoteGame(gameGuid);
