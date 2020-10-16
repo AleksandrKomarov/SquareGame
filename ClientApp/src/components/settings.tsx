@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Cookies from 'universal-cookie';
+import CookieManager from './cookieManager';
 
 interface State {
     agreeToStoreNickname: boolean;
@@ -7,14 +7,12 @@ interface State {
 }
 
 export default class Settings extends React.Component<{}, State> {
-    private readonly cookies = new Cookies();
-
     constructor(props: {}) {
         super(props);
 
         this.state = {
-            agreeToStoreNickname: this.cookies.get("agreeToStoreNickname") === "true",
-            nickname: this.cookies.get<string>("nickname") || ""
+            agreeToStoreNickname: CookieManager.getInstance().getConsentToStoreNickname(),
+            nickname: CookieManager.getInstance().getNickname()
         }
     }
 
@@ -41,12 +39,7 @@ export default class Settings extends React.Component<{}, State> {
         this.setState({
             ...this.state,
             agreeToStoreNickname: consent
-        }, () => {
-            this.cookies.set("agreeToStoreNickname", consent, { path: "/", expires: new Date(2030, 1, 1) });
-            if (!consent) {
-                this.cookies.remove("nickname");
-            }
-        });
+        }, () => CookieManager.getInstance().setConsentToStoreNickname(consent));
     }
 
     private renderNameField = () => {
@@ -56,7 +49,7 @@ export default class Settings extends React.Component<{}, State> {
         return (
             <div>
                 <input
-                    style={{ "width": "310px" }}
+                    style={{ "width": "150px" }}
                     placeholder="Enter nickname"
                     value={this.state.nickname}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onNicknameChange(event.target.value)} />
@@ -65,6 +58,9 @@ export default class Settings extends React.Component<{}, State> {
     }
 
     private onNicknameChange = (nickname: string) => {
+        if (nickname.length > 10)
+            return;
+
         this.setState({
             ...this.state,
             nickname: nickname
@@ -72,6 +68,6 @@ export default class Settings extends React.Component<{}, State> {
     }
 
     private onSaveClick = () => {
-        this.cookies.set("nickname", this.state.nickname, { path: "/", expires: new Date(2030, 1, 1) });
+        CookieManager.getInstance().setNickname(this.state.nickname);
     }
 }
