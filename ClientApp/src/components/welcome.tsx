@@ -5,7 +5,7 @@ export default class Welcome extends React.Component {
         return (
             <div>
                 <img src="game.jpg" alt="Game process" width="300px" />
-                <h3>Quick simple and funny game to play with a friend/friends or a computer.</h3>
+                <h3>Quick, simple and fun game to play with a friend/friends or a computer.</h3>
                 <p>Roll dice and get the figure size or shape (in tetris mode).</p>
                 <p>Place your figure in a vacant space starting from your corner. Expand your territory by adding new figures to the ones on the field. All your figures should be attached to each other.</p>
                 <p>If needed you may rotate the figure. For every figure placed you get winning points equal to the figure size.</p>

@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, Nav, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './navMenu.css';
 import { Pages } from './pages';
 
 interface Props {
-    links: [Pages, string][];
+    mainLinks: [Pages, string][];
+    collapsedLinks: [Pages, string][];
     onLinkClick: (page: Pages) => void;
 }
 
@@ -22,24 +23,26 @@ export default class NavMenu extends React.PureComponent<Props, State> {
         };
     }
 
-    public render() {
-        const links = this.props.links.map(link => <NavLink key={link[0]} tag={Link} className="text-dark" onClick={() => this.props.onLinkClick(link[0])} to="/">{link[1]}</NavLink>);
+    render() {
+        const mainLinks = this.props.mainLinks.map(link => <NavLink key={link[0]} tag={Link} className="text-dark" onClick={() => this.props.onLinkClick(link[0])} to="/">{link[1]}</NavLink>);
+        const collapsedLinks = this.props.collapsedLinks.map(link => <NavLink key={link[0]} tag={Link} className="text-dark" onClick={() => this.props.onLinkClick(link[0])} to="/">{link[1]}</NavLink>);
 
         return (
             <header>
-                <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
+                <Navbar className="border-bottom box-shadow mb-3" light>
                     <Container>
-                        <NavbarBrand tag={Link} to="/">SquareGame</NavbarBrand>
-                        <NavbarToggler onClick={this.toggle} className="mr-2"/>
-                        <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
-                            <ul className="navbar-nav flex-grow">
-                                <NavItem>
-                                    {links}
-                                </NavItem>
-                            </ul>
+                        <NavbarBrand to="/" tag={Link} className="mr-auto">SquareGame</NavbarBrand>
+                        {mainLinks}
+                        <NavbarToggler onClick={this.toggle} className="mr-2" />
+                        <Collapse isOpen={this.state.isOpen} navbar>
+                            <Nav navbar>
+                                {collapsedLinks}
+                            </Nav>
                         </Collapse>
                     </Container>
                 </Navbar>
+
+               
             </header>
         );
     }

@@ -53,14 +53,16 @@ export default class Home extends React.Component<Props, State> {
                 throw new Error("Not implemented");
         }
 
-        const links: [Pages, string][] = [
+        const mainLinks: [Pages, string][] = [
+            [Pages.Create, "Start new game"]];
+
+        const collapsedLinks: [Pages, string][] = [
             [Pages.Welcome, "Home"],
-            [Pages.Create, "Start new game"],
             [Pages.Settings, "Settings"]];
 
         return (
             <React.Fragment>
-                <NavMenu links={links} onLinkClick={this.onLinkClick}/>
+                <NavMenu mainLinks={mainLinks} collapsedLinks={collapsedLinks} onLinkClick={this.onLinkClick}/>
                 <Container id="container">
                     {content}
                 </Container>
