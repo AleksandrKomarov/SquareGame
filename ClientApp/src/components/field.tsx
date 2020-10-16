@@ -6,6 +6,8 @@ import { PlayerProps } from './players/player';
 import { Coordinates } from './coordinates';
 import createFigureGenerator from './figureGenerator/figureGeneratorFactory';
 import { IGameTypeProvider, createGameTypeProvider } from './gameTypeProvider';
+import CookieManager from './cookieManager';
+import { StatisticElement } from './statisticElement';
 
 interface Props {
     gameParameters: GameParameters;
@@ -74,7 +76,7 @@ export default class Field extends React.Component<Props, State> {
         }
 
         const players = getPlayersTables(
-            playerProps, 
+            playerProps,
             this.props.gameParameters,
             this.state.gameEnd,
             this.state.playerNumberTurn);
@@ -175,12 +177,17 @@ export default class Field extends React.Component<Props, State> {
             playerNumberTurn = 0;
 
         const skippedCount = this.state.skippedCount + 1;
+        const isGameEnd = skippedCount === this.props.gameParameters.playersCount;
 
         this.setState({
             ...this.state,
             playerNumberTurn: playerNumberTurn,
             skippedCount: skippedCount,
-            gameEnd: skippedCount === this.props.gameParameters.playersCount
+            gameEnd: isGameEnd
+        }, () => {
+            if (isGameEnd) {
+                this.addStatisticIfNeeded();
+            }
         });
     }
 
@@ -192,5 +199,17 @@ export default class Field extends React.Component<Props, State> {
             ...this.state,
             gameEnd: true
         }, () => alert(message));
+    }
+
+    private addStatisticIfNeeded = () => {
+        if (CookieManager.getInstance().getConsentToCollectStatistics()) {
+            const statisticElement: StatisticElement = {
+                ...this.props.gameParameters,
+                remoteGame: null,
+                gameResult: this.gameTypeProvider.getGameResult(this.players, this.state.playerCells)
+            };
+
+            CookieManager.getInstance().addStatisticElement(statisticElement);
+        }
     }
 }

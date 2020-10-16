@@ -6,7 +6,8 @@ import { Figure } from '../figure';
 import { RemoteGame, IRemoteGameListener, RemoteGameStatus, Message, MessageType } from '../remoteGame';
 
 export interface Props extends PlayerProps {
-    remoteGame: RemoteGame
+    isUser: boolean;
+    remoteGame: RemoteGame;
 }
 
 interface State {
@@ -120,11 +121,14 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
         }
     }
 
+    isUser() {
+        return this.props.isUser;
+    }
+
     getPlayerName() {
         const nickname = this.props.remoteGame.tryGetPlayerNickname(this.props.playerNumber);
         if (nickname !== null)
             return nickname;
-
 
         switch (this.props.playerNumber) {
             case 0:
@@ -280,7 +284,7 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
                     type: MessageType.Place,
                     data: data
                 });
-            });          
+            });
     }
 
     getCellClass(coordinates: Coordinates) {

@@ -4,9 +4,11 @@ import NavMenu from './navMenu';
 import GameParametersComponent from './gameParameters/gameParametersComponent';
 import Field from './field';
 import Welcome from './welcome';
+import Statistics from './statistics';
 import Settings from './settings';
 import { ServerType, OpponentType, GameType, FigureType, GameParameters } from './gameParameters/gameParameters';
 import { Pages } from './pages';
+import CookieManager from './cookieManager';
 
 interface Props {
 }
@@ -46,8 +48,11 @@ export default class Home extends React.Component<Props, State> {
             case Pages.Game:
                 content = <Field gameParameters={this.state.gameParameters} />;
                 break;
+            case Pages.Statistics:
+                content = <Statistics />;
+                break;
             case Pages.Settings:
-                content = <Settings/>;
+                content = <Settings />;
                 break;
             default:
                 throw new Error("Not implemented");
@@ -56,17 +61,26 @@ export default class Home extends React.Component<Props, State> {
         const mainLinks: [Pages, string][] = [
             [Pages.Create, "Start new game"]];
 
-        const collapsedLinks: [Pages, string][] = [
-            [Pages.Welcome, "Home"],
-            [Pages.Settings, "Settings"]];
-
         return (
             <React.Fragment>
-                <NavMenu mainLinks={mainLinks} collapsedLinks={collapsedLinks} onLinkClick={this.onLinkClick}/>
+                <NavMenu mainLinks={mainLinks} collapsedLinks={this.getCollapsedLinks()} onLinkClick={this.onLinkClick} />
                 <Container id="container">
                     {content}
                 </Container>
             </React.Fragment>);
+    }
+
+    private getCollapsedLinks = (): [Pages, string][] => {
+        const result: [Pages, string][] = [
+            [Pages.Welcome, "Home"]];
+
+        if (CookieManager.getInstance().getConsentToCollectStatistics()) {
+            result.push([Pages.Statistics, "Statistics"]);
+        }
+
+        result.push([Pages.Settings, "Settings"]);
+
+        return result;
     }
 
     private onLinkClick = (page: Pages) => {

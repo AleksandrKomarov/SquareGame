@@ -4,6 +4,10 @@ import { Coordinates } from '../coordinates';
 import PlayerTable from './playerTable';
 import { Figure } from '../figure';
 
+export interface Props extends PlayerProps {
+    isUser: boolean;
+}
+
 interface State {
     figure: Figure;
     figureCoordinates: Coordinates[];
@@ -11,8 +15,8 @@ interface State {
     isPossibleMousePosition: boolean;
 }
 
-export default class HumanPlayer extends Player<PlayerProps, State> {
-    constructor(props: PlayerProps) {
+export class HumanPlayer extends Player<Props, State> {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -21,6 +25,10 @@ export default class HumanPlayer extends Player<PlayerProps, State> {
             mousePosition: null,
             isPossibleMousePosition: false
         };
+    }
+
+    isUser() {
+        return this.props.isUser;
     }
 
     getPlayerName() {
@@ -122,7 +130,7 @@ export default class HumanPlayer extends Player<PlayerProps, State> {
             this.setState({
                 ...this.state,
                 figureCoordinates: []
-            }, () => this.props.onPlaceFigure(potentialPosition));            
+            }, () => this.props.onPlaceFigure(potentialPosition));
     }
 
     getCellClass(coordinates: Coordinates) {

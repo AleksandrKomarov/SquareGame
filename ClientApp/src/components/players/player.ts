@@ -3,6 +3,7 @@ import { Coordinates } from '../coordinates';
 import { IFigureGenerator } from '../figureGenerator/figureGenerator';
 
 export interface IPlayer {
+    isUser(): boolean;
     getPlayerName(): string;
     getTurnMessage(): string;
     onMouseMove(coordinates: Coordinates): void;
@@ -23,7 +24,9 @@ export interface PlayerProps {
     onGameEnd: (message: string) => void;
 }
 
-export abstract class Player<TProps extends PlayerProps, TState>  extends React.Component<TProps, TState> implements IPlayer  {
+export abstract class Player<TProps extends PlayerProps, TState> extends React.Component<TProps, TState> implements IPlayer {
+    abstract isUser(): boolean;
+
     abstract getPlayerName(): string;
 
     abstract getTurnMessage(): string;

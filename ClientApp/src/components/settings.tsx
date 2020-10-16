@@ -4,6 +4,7 @@ import CookieManager from './cookieManager';
 interface State {
     agreeToStoreNickname: boolean;
     nickname: string;
+    agreeToCollectStatistics: boolean;
 }
 
 export default class Settings extends React.Component<{}, State> {
@@ -12,37 +13,39 @@ export default class Settings extends React.Component<{}, State> {
 
         this.state = {
             agreeToStoreNickname: CookieManager.getInstance().getConsentToStoreNickname(),
-            nickname: CookieManager.getInstance().getNickname()
+            nickname: CookieManager.getInstance().getNickname(),
+            agreeToCollectStatistics: CookieManager.getInstance().getConsentToCollectStatistics()
         }
     }
 
     render() {
         return (
             <div>
-                {this.renderNameConsent()}
-                {this.renderNameField()}
+                {this.renderNicknameConsent()}
+                {this.renderNicknameField()}
+                {this.renderStatisticsConsent()}
             </div>);
     }
 
-    private renderNameConsent = () => {
+    private renderNicknameConsent = () => {
         return (
             <div>
                 <input
                     type="checkbox"
                     checked={this.state.agreeToStoreNickname}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onNameConsentChange(event.target.checked)} />
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onNicknameConsentChange(event.target.checked)} />
                 <span>I agree to store my nickname in cookies.</span>
             </div>);
     }
 
-    private onNameConsentChange = (consent: boolean) => {
+    private onNicknameConsentChange = (consent: boolean) => {
         this.setState({
             ...this.state,
             agreeToStoreNickname: consent
         }, () => CookieManager.getInstance().setConsentToStoreNickname(consent));
     }
 
-    private renderNameField = () => {
+    private renderNicknameField = () => {
         if (!this.state.agreeToStoreNickname)
             return null;
 
@@ -69,5 +72,23 @@ export default class Settings extends React.Component<{}, State> {
 
     private onSaveClick = () => {
         CookieManager.getInstance().setNickname(this.state.nickname);
+    }
+
+    private renderStatisticsConsent = () => {
+        return (
+            <div>
+                <input
+                    type="checkbox"
+                    checked={this.state.agreeToCollectStatistics}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onStatisticsConsentChange(event.target.checked)} />
+                <span>I agree to collect my statistics in cookies.</span>
+            </div>);
+    }
+
+    private onStatisticsConsentChange = (consent: boolean) => {
+        this.setState({
+            ...this.state,
+            agreeToCollectStatistics: consent
+        }, () => CookieManager.getInstance().setConsentToCollectStatistics(consent));
     }
 }

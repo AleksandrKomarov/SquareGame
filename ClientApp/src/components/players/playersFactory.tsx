@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { IPlayer, PlayerProps } from './player';
-import HumanPlayer from './humanPlayer';
+import { Props as HumanPlayerProps, HumanPlayer } from './humanPlayer';
 import ComputerPlayer from './computerPlayer';
-import { Props, RemotePlayer } from './remotePlayer';
+import { Props as RemotePlayerProps, RemotePlayer } from './remotePlayer';
 import { ServerType, OpponentType, GameParameters } from '../gameParameters/gameParameters';
 
 const playersRefs: any[] = [];
@@ -28,8 +28,9 @@ function getLocalPlayersTables(
     const result: JSX.Element[] = [];
 
     for (let i = 0; i < gameParameters.playersCount; ++i) {
-        const props = {
+        const props: HumanPlayerProps = {
             ...defaultProps,
+            isUser: gameParameters.opponentType === OpponentType.Computer,
             playerNumber: i,
             isActive: !isGameEnd && activePlayerNumber === i
         };
@@ -40,18 +41,17 @@ function getLocalPlayersTables(
         const ref = playersRefs[i];
 
         if (i === 0) {
-
             result.push(<HumanPlayer key={i} ref={ref} {...props} />);
             continue;
         }
 
         switch (gameParameters.opponentType) {
-        case OpponentType.Human:
-            result.push(<HumanPlayer key={i} ref={ref} {...props} />);
-            break;
-        default:
-            result.push(<ComputerPlayer key={i} ref={ref} {...props} />);
-            break;
+            case OpponentType.Human:
+                result.push(<HumanPlayer key={i} ref={ref} {...props} />);
+                break;
+            default:
+                result.push(<ComputerPlayer key={i} ref={ref} {...props} />);
+                break;
         }
     }
 
@@ -72,13 +72,14 @@ function getRemotePlayersTables(
     const result: JSX.Element[] = [];
 
     for (let i = 0; i < remoteGame.getPlayersCount(); ++i) {
-        const isActive = i === remoteGame.getPlayerNumber();
+        const isUser = i === remoteGame.getPlayerNumber();
 
-        const props: Props = {
+        const props: RemotePlayerProps = {
             ...defaultProps,
+            isUser: isUser,
             remoteGame: remoteGame,
             playerNumber: i,
-            isActive: !isGameEnd && isActive && activePlayerNumber === i
+            isActive: !isGameEnd && isUser && activePlayerNumber === i
         };
 
         if (playersRefs.length < i + 1) {

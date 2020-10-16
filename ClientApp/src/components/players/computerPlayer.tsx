@@ -30,6 +30,10 @@ export default class ComputerPlayer extends Player<PlayerProps, State> {
         }
     }
 
+    isUser() {
+        return false;
+    }
+
     getPlayerName() {
         return this.props.playersCells.length === 2
             ? "Computer"
