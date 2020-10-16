@@ -4,6 +4,7 @@ import CookieManager from './cookieManager';
 interface State {
     agreeToStoreNickname: boolean;
     nickname: string;
+    errorMessage: string | null;
     agreeToCollectStatistics: boolean;
 }
 
@@ -14,6 +15,7 @@ export default class Settings extends React.Component<{}, State> {
         this.state = {
             agreeToStoreNickname: CookieManager.getInstance().getConsentToStoreNickname(),
             nickname: CookieManager.getInstance().getNickname(),
+            errorMessage: null,
             agreeToCollectStatistics: CookieManager.getInstance().getConsentToCollectStatistics()
         }
     }
@@ -57,16 +59,23 @@ export default class Settings extends React.Component<{}, State> {
                     value={this.state.nickname}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.onNicknameChange(event.target.value)} />
                 <button className="gameParameters" onClick={this.onSaveClick}>Save</button>
+                <span className="error-message">{this.state.errorMessage}</span>
             </div>);
     }
 
     private onNicknameChange = (nickname: string) => {
-        if (nickname.length > 10)
+        if (nickname.length > 10) {
+            this.setState({
+                ...this.state,
+                errorMessage: "Max nickname length is 10 symbols"
+            });
             return;
+        }
 
         this.setState({
             ...this.state,
-            nickname: nickname
+            nickname: nickname,
+            errorMessage: null
         });
     }
 
