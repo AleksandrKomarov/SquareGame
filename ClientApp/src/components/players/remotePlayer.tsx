@@ -2,6 +2,7 @@ import * as React from 'react';
 import { PlayerProps, Player } from './player';
 import { Coordinates } from '../coordinates';
 import PlayerTable from './playerTable';
+import ComputerTable from './computerTable';
 import { Figure } from '../figure';
 import { RemoteGame, IRemoteGameListener, RemoteGameStatus, Message, MessageType } from '../remoteGame';
 
@@ -11,6 +12,8 @@ export interface Props extends PlayerProps {
 }
 
 interface State {
+    message: string;
+    dig: string;
     figure: Figure;
     figureCoordinates: Coordinates[];
     mousePosition: Coordinates | null;
@@ -40,6 +43,11 @@ interface MouseMoveMessage {
     position: Coordinates;
 }
 
+interface TextMessage {
+    playerNumber: number;
+    text: string;
+}
+
 export class RemotePlayer extends Player<Props, State> implements IRemoteGameListener {
     constructor(props: Props) {
         super(props);
@@ -50,7 +58,9 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
             figure: props.figureGenerator.getDefault(),
             figureCoordinates: [],
             mousePosition: null,
-            isPossibleMousePosition: false
+            isPossibleMousePosition: false,
+            message: "Waiting for turn",
+            dig: ""
         };
     }
 
@@ -78,7 +88,8 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
                     this.setState({
                         ...this.state,
                         figure: figure,
-                        figureCoordinates: figure.coordinates
+                        figureCoordinates: figure.coordinates,
+                        message: "Rolled"
                     });
                 }
                 break;
@@ -87,7 +98,8 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
                 if (rotateData.playerNumber === this.props.playerNumber) {
                     this.setState({
                         ...this.state,
-                        figureCoordinates: this.state.figure.rotate(this.state.figureCoordinates)
+                        figureCoordinates: this.state.figure.rotate(this.state.figureCoordinates),
+                        message: "Rotated"
                     });
                 }
                 break;
@@ -96,7 +108,8 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
                 if (skipData.playerNumber === this.props.playerNumber) {
                     this.setState({
                         ...this.state,
-                        figureCoordinates: []
+                        figureCoordinates: [],
+                        message: "Skipped"
                     }, () => this.props.onSkip());
                 }
                 break;
@@ -105,16 +118,30 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
                 if (placeData.playerNumber === this.props.playerNumber) {
                     this.setState({
                         ...this.state,
-                        figureCoordinates: []
+                        figureCoordinates: [],
+                        message: "Placed"
                     }, () => this.props.onPlaceFigure(placeData.position));
                 }
                 break;
             case MessageType.MouseMove:
                 const mouseMoveData: MouseMoveMessage = message.data;
                 if (mouseMoveData.playerNumber === this.props.playerNumber) {
+                    const message = this.state.figureCoordinates.length > 0
+                        ? "Trying to find a nice place"
+                        : this.state.message;
                     this.setState({
                         ...this.state,
-                        mousePosition: mouseMoveData.position
+                        mousePosition: mouseMoveData.position,
+                        message: message
+                    }, this.props.updateField);
+                }
+                break;
+            case MessageType.Message:
+                const textMessage: TextMessage = message.data;
+                if (textMessage.playerNumber === this.props.playerNumber) {
+                    this.setState({
+                        ...this.state,
+                        dig: textMessage.text
                     }, this.props.updateField);
                 }
                 break;
@@ -178,6 +205,10 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
     }
 
     render() {
+        return this.props.isUser ? this.renderUserTable() : this.renderRemotePlayerTable();
+    }
+
+    private renderUserTable = () => {
         return (
             <PlayerTable
                 playerNumber={this.props.playerNumber}
@@ -189,7 +220,31 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
                 canBeRotated={this.state.figure.canBeRotated}
                 onRoll={this.onRoll}
                 onRotate={this.onRotate}
-                onSkip={this.onSkip} />);
+                onSkip={this.onSkip}
+                showSendMessage={true}
+                onSendMessage={this.sendTextMessage}/>);
+    }
+
+    private sendTextMessage = (text: string) => {
+        const data: TextMessage = {
+            playerNumber: this.props.playerNumber,
+            text: text
+        };
+        this.props.remoteGame.send({
+            type: MessageType.Message,
+            data: data
+        });
+    }
+
+    private renderRemotePlayerTable = () => {
+        return (
+            <ComputerTable
+                playerNumber={this.props.playerNumber}
+                computerName={this.getPlayerName()}
+                points={this.props.playersCells[this.props.playerNumber].length}
+                figurePresenter={this.state.figure.presenter}
+                message={this.state.message}
+                dig={<div>{this.state.dig}</div>} />);
     }
 
     private onRoll = () => {
@@ -246,6 +301,13 @@ export class RemotePlayer extends Player<Props, State> implements IRemoteGameLis
     onMouseMove(coordinates: Coordinates) {
         if (!this.props.isActive)
             return;
+
+        const mousePosition = this.state.mousePosition;
+        if (mousePosition !== null) {
+            if (mousePosition.row === coordinates.row && mousePosition.column === coordinates.column) {
+                return;
+            }
+        }
 
         this.setState({
             ...this.state,

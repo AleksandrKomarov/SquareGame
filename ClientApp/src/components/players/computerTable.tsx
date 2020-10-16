@@ -6,7 +6,7 @@ interface Props {
     points: number;
     figurePresenter: JSX.Element;
     message: string;
-    dig: string;
+    dig: JSX.Element;
 }
 
 export default class ComputerTable extends React.Component<Props> {
@@ -17,7 +17,7 @@ export default class ComputerTable extends React.Component<Props> {
                 <div>points: {this.props.points}</div>
                 {this.props.figurePresenter}
                 <div>{this.props.message}</div>
-                <i>{this.props.dig}</i>
+                {this.props.dig}
             </div>);
     }
 }

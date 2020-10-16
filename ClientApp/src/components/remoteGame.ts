@@ -23,7 +23,8 @@ export enum MessageType {
     Rotate = 11,
     Skip = 12,
     Place = 13,
-    MouseMove = 14
+    MouseMove = 14,
+    Message = 15
 }
 
 interface PlayerNickname {

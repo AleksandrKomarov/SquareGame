@@ -52,7 +52,7 @@ export default class ComputerPlayer extends Player<PlayerProps, State> {
                 points={this.props.playersCells[this.props.playerNumber].length}
                 figurePresenter={this.state.figure.presenter}
                 message={this.state.message}
-                dig={this.state.dig} />);
+                dig={<i>{this.state.dig}</i>} />);
     }
 
     onMouseMove(coordinates: Coordinates) {
