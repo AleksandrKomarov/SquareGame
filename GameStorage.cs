@@ -70,7 +70,8 @@ namespace SquareGame
                     return false;
 
                 webSockets.Add(webSocket);
-                SendPlayerNumber(webSocket, webSockets.Count);
+
+                SendPlayersNumbers(webSockets);
                 SendPlayersCount(gameGuid);
                 return true;
             }
@@ -85,13 +86,19 @@ namespace SquareGame
                 if (!_games.ContainsKey(gameGuid))
                     return;
 
-                var playerIndex = _games[gameGuid].IndexOf(webSocket);
+                var webSockets = _games[gameGuid];
 
-                _games[gameGuid].Remove(webSocket);
+                var playerIndex = webSockets.IndexOf(webSocket);
 
-                SendPlayersCount(gameGuid);
+                webSockets.Remove(webSocket);
 
                 shouldEndGame = playerIndex == 0 || _startedGames.Contains(gameGuid);
+
+                if (!shouldEndGame)
+                {
+                    SendPlayersNumbers(webSockets);
+                    SendPlayersCount(gameGuid);
+                }
             }
 
             if (shouldEndGame)
@@ -133,6 +140,16 @@ namespace SquareGame
             {
                 if (!webSocket.CloseStatus.HasValue)
                     await webSocket.SendAsync(message, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+        }
+
+        private static void SendPlayersNumbers(IEnumerable<WebSocket> webSockets)
+        {
+            var random = new Random();
+            var sortedWebSockets = webSockets.OrderBy(ws => random.Next()).ToList();
+            for (var i = 0; i < sortedWebSockets.Count; ++i)
+            {
+                SendPlayerNumber(sortedWebSockets[i], i);
             }
         }
 

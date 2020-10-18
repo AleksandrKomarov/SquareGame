@@ -70,7 +70,7 @@ export class RemoteGame {
 
         switch (message.type) {
             case MessageType.PlayerNumber:
-                this.playerNumber = message.data - 1;
+                this.playerNumber = message.data;
                 break;
             case MessageType.PlayersChanged:
                 if (!this.gameStarted) {
